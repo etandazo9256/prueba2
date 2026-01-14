@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo Proveedor{% endblock %}
+{% block subtitle %}Agregar un nuevo proveedor al sistema{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-truck me-2"></i>
+                    Crear Nuevo Proveedor
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('crear_proveedor') }}">
+                    <div class="row">
+                        <!-- Nombre -->
+                        <div class="col-md-6 mb-3">
+                            <label for="nombre" class="form-label">
+                                <i class="bi bi-building me-1"></i> Nombre *
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="nombre" 
+                                   name="nombre" 
+                                   required
+                                   placeholder="Ej: Distribuidora XYZ">
+                        </div>
+                        
+                        <!-- RUC -->
+                        <div class="col-md-6 mb-3">
+                            <label for="ruc" class="form-label">
+                                <i class="bi bi-card-text me-1"></i> RUC *
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="ruc" 
+                                   name="ruc" 
+                                   required
+                                   placeholder="Ej: 1234567890001">
+                        </div>
+                        
+                        <!-- Teléfono -->
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono" class="form-label">
+                                <i class="bi bi-telephone me-1"></i> Teléfono
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="telefono" 
+                                   name="telefono" 
+                                   placeholder="Ej: 022345678">
+                        </div>
+                        
+                        <!-- Correo -->
+                        <div class="col-md-6 mb-3">
+                            <label for="correo" class="form-label">
+                                <i class="bi bi-envelope me-1"></i> Correo Electrónico
+                            </label>
+                            <input type="email" 
+                                   class="form-control" 
+                                   id="correo" 
+                                   name="correo" 
+                                   placeholder="Ej: contacto@proveedor.com">
+                        </div>
+                        
+                        <!-- Dirección -->
+                        <div class="col-md-12 mb-4">
+                            <label for="direccion" class="form-label">
+                                <i class="bi bi-geo-alt me-1"></i> Dirección
+                            </label>
+                            <textarea class="form-control" 
+                                      id="direccion" 
+                                      name="direccion" 
+                                      rows="3"
+                                      placeholder="Dirección completa del proveedor"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Botones -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{{ url_for('listar_proveedores') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i> Crear Proveedor
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Información importante -->
+        <div class="card mt-4 border-info">
+            <div class="card-header bg-info bg-opacity-10">
+                <h6 class="card-title mb-0">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Información sobre proveedores
+                </h6>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>Los proveedores son necesarios para registrar compras de productos.</li>
+                    <li>Puedes asignar proveedores a los productos para mejor control.</li>
+                    <li>El RUC es obligatorio para facturación.</li>
+                    <li>Mantén actualizada la información de contacto.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

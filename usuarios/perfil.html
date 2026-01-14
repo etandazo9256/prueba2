@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Mi Perfil{% endblock %}
+{% block subtitle %}Información de tu cuenta{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">Información del Perfil</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Usuario:</dt>
+                    <dd class="col-sm-9">{{ usuario.usuario }}</dd>
+                    
+                    <dt class="col-sm-3">Fecha Registro:</dt>
+                    <dd class="col-sm-9">{{ usuario.fecha_registro.strftime('%d/%m/%Y %H:%M') }}</dd>
+                </dl>
+                
+                <div class="alert alert-info mt-3">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Para cambiar tu contraseña, contacta al administrador.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">Acciones</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('editar_usuario', id=usuario.id) }}" class="btn btn-outline-primary">
+                        <i class="bi bi-pencil me-1"></i> Editar Mi Usuario
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">
+                        <i class="bi bi-box-arrow-right me-1"></i> Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

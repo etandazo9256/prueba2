@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Compra{% endblock %}
+{% block subtitle %}Modificar información de la compra{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-pencil-square me-2"></i>
+                    Editar Compra #{{ compra.id_compra }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    La funcionalidad de edición de compras está en desarrollo. Por ahora, solo puedes eliminar la compra y crear una nueva.
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Fecha de Compra</label>
+                        <p class="form-control-plaintext">{{ compra.fecha_compra.strftime('%d/%m/%Y') }}</p>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Proveedor</label>
+                        <p class="form-control-plaintext">
+                            {% if compra.proveedor %}
+                                {{ compra.proveedor.nombre }}
+                            {% else %}
+                                <span class="text-muted">Proveedor no especificado</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    
+                    <div class="col-md-12">
+                        <h6>Productos Comprados</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio Unitario</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for detalle in compra.detalles %}
+                                    <tr>
+                                        <td>{{ detalle.producto.nombre }}</td>
+                                        <td>{{ detalle.cantidad }}</td>
+                                        <td>${{ detalle.precio_unitario }}</td>
+                                        <td>${{ detalle.subtotal }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                        <td><strong>${{ compra.total }}</strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Botones -->
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{{ url_for('listar_compras') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i> Volver a Compras
+                    </a>
+                    <div>
+                        <form method="POST" action="{{ url_for('eliminar_compra', id=compra.id_compra) }}" 
+                              style="display: inline;" 
+                              onsubmit="return confirm('¿Estás seguro de eliminar esta compra?');">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash me-1"></i> Eliminar Compra
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

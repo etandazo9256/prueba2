@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+
+{% block title %}Reportes{% endblock %}
+{% block subtitle %}Generación de reportes del sistema{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-download me-2"></i>
+                    Descargas Directas de Reportes
+                </h5>
+                <p class="text-muted mb-0 small">Genera y descarga reportes en formatos PDF y Excel</p>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Ventas -->
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card h-100 border shadow-sm">
+                            <div class="card-body text-center">
+                                <i class="bi bi-receipt-cutoff display-5 text-primary mb-3"></i>
+                                <h5>Ventas</h5>
+                                <p class="text-muted small mb-3">Reporte completo en PDF con todas las ventas</p>
+                                <a href="{{ url_for('descargar_reporte_ventas') }}" class="btn btn-primary w-100">
+                                    <i class="bi bi-file-pdf me-1"></i> Descargar PDF
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Compras -->
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card h-100 border shadow-sm">
+                            <div class="card-body text-center">
+                                <i class="bi bi-cart-check display-5 text-success mb-3"></i>
+                                <h5>Compras</h5>
+                                <p class="text-muted small mb-3">Reporte de compras a proveedores en PDF</p>
+                                <a href="{{ url_for('descargar_reporte_compras') }}" class="btn btn-success w-100">
+                                    <i class="bi bi-file-pdf me-1"></i> Descargar PDF
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Inventario -->
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card h-100 border shadow-sm">
+                            <div class="card-body text-center">
+                                <i class="bi bi-clipboard-data display-5 text-warning mb-3"></i>
+                                <h5>Inventario</h5>
+                                <p class="text-muted small mb-3">Reporte detallado en Excel con stock</p>
+                                <a href="{{ url_for('descargar_reporte_inventario') }}" class="btn btn-warning text-white w-100">
+                                    <i class="bi bi-file-excel me-1"></i> Descargar Excel
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Clientes -->
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card h-100 border shadow-sm">
+                            <div class="card-body text-center">
+                                <i class="bi bi-people display-5 text-info mb-3"></i>
+                                <h5>Clientes</h5>
+                                <p class="text-muted small mb-3">Lista de clientes con estadísticas en PDF</p>
+                                <a href="{{ url_for('descargar_reporte_clientes') }}" class="btn btn-info w-100">
+                                    <i class="bi bi-file-pdf me-1"></i> Descargar PDF
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Proveedores -->
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card h-100 border shadow-sm">
+                            <div class="card-body text-center">
+                                <i class="bi bi-truck display-5 text-purple mb-3"></i>
+                                <h5>Proveedores</h5>
+                                <p class="text-muted small mb-3">Información completa de proveedores en PDF</p>
+                                <a href="{{ url_for('descargar_reporte_proveedores') }}" class="btn btn-purple w-100">
+                                    <i class="bi bi-file-pdf me-1"></i> Descargar PDF
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Productos -->
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card h-100 border shadow-sm">
+                            <div class="card-body text-center">
+                                <i class="bi bi-box-seam display-5 text-danger mb-3"></i>
+                                <h5>Productos</h5>
+                                <p class="text-muted small mb-3">Catálogo completo con precios y stock en PDF</p>
+                                <a href="{{ url_for('descargar_reporte_productos') }}" class="btn btn-danger w-100">
+                                    <i class="bi bi-file-pdf me-1"></i> Descargar PDF
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Usuarios -->
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card h-100 border shadow-sm">
+                            <div class="card-body text-center">
+                                <i class="bi bi-person-badge display-5 text-secondary mb-3"></i>
+                                <h5>Usuarios</h5>
+                                <p class="text-muted small mb-3">Usuarios del sistema en PDF</p>
+                                <a href="{{ url_for('descargar_reporte_usuarios') }}" class="btn btn-secondary w-100">
+                                    <i class="bi bi-file-pdf me-1"></i> Descargar PDF
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Todos los Reportes -->
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card h-100 border shadow-sm">
+                            <div class="card-body text-center">
+                                <i class="bi bi-collection display-5 text-dark mb-3"></i>
+                                <h5>Paquete Completo</h5>
+                                <p class="text-muted small mb-3">Descarga todos los reportes</p>
+                                <div class="btn-group-vertical w-100" role="group">
+                                    <a href="{{ url_for('descargar_reporte_ventas') }}" class="btn btn-outline-dark mb-2">
+                                        <i class="bi bi-receipt me-1"></i> Ventas PDF
+                                    </a>
+                                    <a href="{{ url_for('descargar_reporte_compras') }}" class="btn btn-outline-dark mb-2">
+                                        <i class="bi bi-cart-check me-1"></i> Compras PDF
+                                    </a>
+                                    <a href="{{ url_for('descargar_reporte_inventario') }}" class="btn btn-outline-dark">
+                                        <i class="bi bi-file-excel me-1"></i> Inventario Excel
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <!-- Información sobre reportes -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Información sobre los Reportes
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-3">El sistema genera reportes profesionales listos para imprimir o analizar. Cada reporte incluye:</p>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="alert alert-light">
+                            <h6><i class="bi bi-check-circle text-success me-2"></i>Características PDF:</h6>
+                            <ul class="mb-0">
+                                <li>Formato profesional A4</li>
+                                <li>Logo y encabezado del sistema</li>
+                                <li>Fecha de generación automática</li>
+                                <li>Estadísticas y resúmenes</li>
+                                <li>Colores según estados</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="alert alert-light">
+                            <h6><i class="bi bi-file-excel text-success me-2"></i>Características Excel:</h6>
+                            <ul class="mb-0">
+                                <li>Formato para análisis de datos</li>
+                                <li>Fórmulas y formatos condicionales</li>
+                                <li>Fácil de filtrar y ordenar</li>
+                                <li>Compatible con todos los programas</li>
+                                <li>Ideal para procesamiento de datos</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info mt-3">
+                    <h6><i class="bi bi-lightbulb me-2"></i>Sugerencias:</h6>
+                    <ul class="mb-0">
+                        <li>Los reportes se generan con los datos actuales del sistema</li>
+                        <li>Los archivos se descargan automáticamente</li>
+                        <li>Puedes generar reportes ilimitados</li>
+                        <li>Los nombres incluyen fecha y hora de generación</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Estadísticas del sistema -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h6 class="card-title mb-0">
+                    <i class="bi bi-bar-chart me-2"></i>
+                    Estadísticas del Sistema
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Total Ventas</span>
+                        <span class="badge bg-primary rounded-pill">
+                            {% if stats and stats.total_ventas %}
+                                ${{ "%.2f"|format(stats.total_ventas) }}
+                            {% else %}
+                                $0.00
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Total Compras</span>
+                        <span class="badge bg-danger rounded-pill">
+                            {% if stats and stats.total_compras %}
+                                ${{ "%.2f"|format(stats.total_compras) }}
+                            {% else %}
+                                $0.00
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Clientes</span>
+                        <span class="badge bg-success rounded-pill">{{ stats.total_clientes if stats else 0 }}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Productos</span>
+                        <span class="badge bg-warning rounded-pill">{{ stats.total_productos if stats else 0 }}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Proveedores</span>
+                        <span class="badge bg-info rounded-pill">{{ stats.total_proveedores if stats else 0 }}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Usuarios</span>
+                        <span class="badge bg-secondary rounded-pill">{{ stats.total_usuarios if stats else 0 }}</span>
+                    </div>
+                </div>
+                
+                <div class="mt-3 text-center">
+                    <small class="text-muted">
+                        <i class="bi bi-clock me-1"></i>
+                        Actualizado: {{ hoy.strftime('%d/%m/%Y %H:%M') }}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.btn-purple {
+    background-color: #8e44ad;
+    border-color: #8e44ad;
+    color: white;
+}
+.btn-purple:hover {
+    background-color: #732d91;
+    border-color: #732d91;
+    color: white;
+}
+.card {
+    transition: transform 0.2s;
+}
+.card:hover {
+    transform: translateY(-2px);
+}
+.shadow-sm {
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
+}
+</style>
+{% endblock %}

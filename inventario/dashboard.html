@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Inventario{% endblock %}
+{% block subtitle %}Control de stock y gestión de inventario{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Tarjetas de estadísticas -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="text-muted fw-normal">Total Productos</h6>
+                        <h3 class="fw-bold">{{ total_productos }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-boxes fs-1 text-primary"></i>
+                    </div>
+                </div>
+                <small class="text-muted">Productos registrados</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stat-card" style="border-left-color: #2ecc71;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="text-muted fw-normal">Valor Inventario</h6>
+                        <h3 class="fw-bold">${{ "%.2f"|format(total_valor_inventario) }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-cash-coin fs-1" style="color: #2ecc71;"></i>
+                    </div>
+                </div>
+                <small class="text-muted">Valor total en stock</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stat-card" style="border-left-color: #f39c12;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="text-muted fw-normal">Bajo Stock</h6>
+                        <h3 class="fw-bold">{{ productos_bajo_stock }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-exclamation-triangle fs-1" style="color: #f39c12;"></i>
+                    </div>
+                </div>
+                <small class="text-muted">Productos con ≤ 5 unidades</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stat-card" style="border-left-color: #e74c3c;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="text-muted fw-normal">Sin Stock</h6>
+                        <h3 class="fw-bold">{{ productos_sin_stock }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-x-circle fs-1" style="color: #e74c3c;"></i>
+                    </div>
+                </div>
+                <small class="text-muted">Productos agotados</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Tabla de inventario -->
+    <div class="col-12">
+        <div class="card">
+            <!-- 🔽 HEADER UNIDO AQUÍ 🔽 -->
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Dashboard de Inventario</h5>
+                <div>
+                    <a href="{{ url_for('descargar_reporte_inventario') }}" class="btn btn-success btn-sm me-2">
+                        <i class="bi bi-file-excel me-1"></i> Reporte Excel
+                    </a>
+                    <button class="btn btn-outline-primary btn-sm me-2" onclick="exportarInventario()">
+                        <i class="bi bi-download me-1"></i> Exportar
+                    </button>
+                    <button class="btn btn-primary btn-sm" onclick="filtrarBajoStock()">
+                        <i class="bi bi-filter me-1"></i> Ver Bajo Stock
+                    </button>
+                </div>
+            </div>
+            <!-- 🔼 FIN HEADER 🔼 -->
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="tablaInventario">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Producto</th>
+                                <th>Stock Actual</th>
+                                <th>Precio Compra</th>
+                                <th>Precio Venta</th>
+                                <th>Valor en Inventario</th>
+                                <th>Estado</th>
+                                <th>Proveedor</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for producto in productos %}
+                            <tr class="{% if producto.stock <= 0 %}table-danger{% elif producto.stock <= 5 %}table-warning{% endif %}">
+                                <td>PROD-{{ "%06d"|format(producto.id_producto) }}</td>
+                                <td>
+                                    <strong>{{ producto.nombre }}</strong>
+                                </td>
+                                <td>
+                                    <span>{{ producto.stock }}</span>
+                                </td>
+                                <td>${{ producto.precio_compra }}</td>
+                                <td>${{ producto.precio_venta }}</td>
+                                <td>
+                                    <strong>${{ "%.2f"|format(producto.precio_compra * producto.stock) }}</strong>
+                                </td>
+                                <td>
+                                    {% if producto.stock > 10 %}
+                                        <span class="badge bg-success">Disponible</span>
+                                    {% elif producto.stock > 0 %}
+                                        <span class="badge bg-warning">Bajo Stock</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Agotado</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if producto.proveedor %}
+                                        {{ producto.proveedor.nombre }}
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{{ url_for('ver_producto', id=producto.id_producto) }}" class="btn btn-outline-info">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{{ url_for('editar_producto', id=producto.id_producto) }}" class="btn btn-outline-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-light">
+                                <td colspan="5" class="text-end"><strong>TOTAL INVENTARIO:</strong></td>
+                                <td><strong>${{ "%.2f"|format(total_valor_inventario) }}</strong></td>
+                                <td colspan="3"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div class="text-muted">
+                        Mostrando {{ productos|length }} productos en inventario
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Proveedor{% endblock %}
+{% block subtitle %}Modificar información del proveedor{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-pencil-square me-2"></i>
+                    Editar Proveedor: {{ proveedor.nombre }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('editar_proveedor', id=proveedor.id_proveedor) }}">
+                    <div class="row">
+                        <!-- Nombre -->
+                        <div class="col-md-6 mb-3">
+                            <label for="nombre" class="form-label">
+                                <i class="bi bi-building me-1"></i> Nombre *
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="nombre" 
+                                   name="nombre" 
+                                   value="{{ proveedor.nombre }}" 
+                                   required>
+                        </div>
+                        
+                        <!-- RUC -->
+                        <div class="col-md-6 mb-3">
+                            <label for="ruc" class="form-label">
+                                <i class="bi bi-card-text me-1"></i> RUC *
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="ruc" 
+                                   name="ruc" 
+                                   value="{{ proveedor.ruc }}" 
+                                   required>
+                        </div>
+                        
+                        <!-- Teléfono -->
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono" class="form-label">
+                                <i class="bi bi-telephone me-1"></i> Teléfono
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="telefono" 
+                                   name="telefono" 
+                                   value="{{ proveedor.telefono or '' }}">
+                        </div>
+                        
+                        <!-- Correo -->
+                        <div class="col-md-6 mb-3">
+                            <label for="correo" class="form-label">
+                                <i class="bi bi-envelope me-1"></i> Correo Electrónico
+                            </label>
+                            <input type="email" 
+                                   class="form-control" 
+                                   id="correo" 
+                                   name="correo" 
+                                   value="{{ proveedor.correo or '' }}">
+                        </div>
+                        
+                        <!-- Dirección -->
+                        <div class="col-md-12 mb-4">
+                            <label for="direccion" class="form-label">
+                                <i class="bi bi-geo-alt me-1"></i> Dirección
+                            </label>
+                            <textarea class="form-control" 
+                                      id="direccion" 
+                                      name="direccion" 
+                                      rows="3">{{ proveedor.direccion or '' }}</textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Botones -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{{ url_for('listar_proveedores') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Estadísticas -->
+        <div class="card mt-4">
+            <div class="card-header bg-white">
+                <h6 class="card-title mb-0">
+                    <i class="bi bi-graph-up me-2"></i>
+                    Estadísticas del Proveedor
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4 mb-3">
+                        <div class="bg-light p-3 rounded">
+                            <h4 class="text-primary">{{ proveedor.productos|length }}</h4>
+                            <small class="text-muted">Productos Asociados</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="bg-light p-3 rounded">
+                            <h4 class="text-success">{{ proveedor.compras|length }}</h4>
+                            <small class="text-muted">Compras Registradas</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="bg-light p-3 rounded">
+                            <h4 class="text-warning">
+                                {% set total_compras = proveedor.compras|sum(attribute='total') %}
+                                ${{ "%.2f"|format(total_compras) if total_compras else "0.00" }}
+                            </h4>
+                            <small class="text-muted">Total en Compras</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

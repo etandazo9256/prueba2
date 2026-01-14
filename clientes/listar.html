@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Clientes{% endblock %}
+{% block subtitle %}Gestión de clientes registrados{% endblock %}
+
+{% block content %}
+<div class="card">
+
+    <!-- HEADER CON BOTONES -->
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Lista de Clientes</h5>
+        <div>
+            <a href="{{ url_for('descargar_reporte_clientes') }}" class="btn btn-success me-2">
+                <i class="bi bi-file-pdf me-1"></i> Reporte PDF
+            </a>
+            <a href="{{ url_for('crear_cliente') }}" class="btn btn-primary">
+                <i class="bi bi-person-plus me-1"></i> Nuevo Cliente
+            </a>
+        </div>
+    </div>
+
+    <!-- CUERPO -->
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Cédula</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cliente in clientes %}
+                    <tr>
+                        <td>{{ cliente.id }}</td>
+                        <td>{{ cliente.nombre }}</td>
+                        <td>{{ cliente.cedula }}</td>
+                        <td class="text-center">
+                            <div class="btn-group btn-group-sm">
+                                <!-- CAMBIO AQUÍ: cliente.id en lugar de cliente.id_cliente -->
+                                <a href="{{ url_for('editar_cliente', id=cliente.id) }}"
+                                   class="btn btn-warning">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <!-- CAMBIO AQUÍ: cliente.id en lugar de cliente.id_cliente -->
+                                <form action="{{ url_for('eliminar_cliente', id=cliente.id) }}"
+                                      method="post"
+                                      style="display:inline;">
+                                    <button class="btn btn-danger"
+                                            onclick="return confirm('¿Seguro que deseas eliminar este cliente?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-4">
+                            <i class="bi bi-people display-6"></i>
+                            <p class="mt-2">No hay clientes registrados</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-muted mt-3">
+            Total de clientes: <strong>{{ clientes|length }}</strong>
+        </div>
+    </div>
+</div>
+{% endblock %}

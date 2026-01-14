@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo Producto{% endblock %}
+{% block subtitle %}Agregar un nuevo producto al inventario{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Crear Nuevo Producto
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('crear_producto') }}">
+                    <div class="row">
+                        <!-- Nombre del Producto -->
+                        <div class="col-md-12 mb-3">
+                            <label for="nombre" class="form-label">
+                                <i class="bi bi-tag me-1"></i> Nombre del Producto *
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="nombre" 
+                                   name="nombre" 
+                                   required
+                                   placeholder="Ej: Laptop Dell Inspiron 15">
+                            <div class="form-text">Nombre completo del producto.</div>
+                        </div>
+                        
+                        <!-- Descripción -->
+                        <div class="col-md-12 mb-3">
+                            <label for="descripcion" class="form-label">
+                                <i class="bi bi-card-text me-1"></i> Descripción
+                            </label>
+                            <textarea class="form-control" 
+                                      id="descripcion" 
+                                      name="descripcion" 
+                                      rows="3"
+                                      placeholder="Descripción detallada del producto"></textarea>
+                            <div class="form-text">Opcional. Describe características del producto.</div>
+                        </div>
+                        
+                        <!-- Precios -->
+                        <div class="col-md-6 mb-3">
+                            <label for="precio_compra" class="form-label">
+                                <i class="bi bi-arrow-down-circle me-1"></i> Precio de Compra *
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="precio_compra" 
+                                       name="precio_compra" 
+                                       required
+                                       step="0.01"
+                                       min="0"
+                                       placeholder="0.00">
+                            </div>
+                            <div class="form-text">Precio al que compras el producto.</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="precio_venta" class="form-label">
+                                <i class="bi bi-arrow-up-circle me-1"></i> Precio de Venta *
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="precio_venta" 
+                                       name="precio_venta" 
+                                       required
+                                       step="0.01"
+                                       min="0"
+                                       placeholder="0.00">
+                            </div>
+                            <div class="form-text">Precio al que vendes el producto.</div>
+                        </div>
+                        
+                        <!-- Proveedor -->
+                        <div class="col-md-12 mb-4">
+                            <label for="id_proveedor" class="form-label">
+                                <i class="bi bi-truck me-1"></i> Proveedor
+                            </label>
+                            <select class="form-select" id="id_proveedor" name="id_proveedor">
+                                <option value="">Seleccionar proveedor...</option>
+                                {% for proveedor in proveedores %}
+                                <option value="{{ proveedor.id_proveedor }}">
+                                    {{ proveedor.nombre }} ({{ proveedor.ruc }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text">Opcional. Asigna un proveedor a este producto.</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Botones -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{{ url_for('listar_productos') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i> Crear Producto
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Información importante -->
+        <div class="card mt-4 border-warning">
+            <div class="card-header bg-warning bg-opacity-10">
+                <h6 class="card-title mb-0">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    Importante sobre el stock
+                </h6>
+            </div>
+            <div class="card-body">
+                <p>Al crear un producto, <strong>el stock inicial será 0</strong>.</p>
+                <p>Para agregar stock al producto, debes:</p>
+                <ol class="mb-0">
+                    <li>Ir al módulo de <strong>Compras</strong></li>
+                    <li>Crear una nueva compra seleccionando este producto</li>
+                    <li>Especificar la cantidad comprada</li>
+                    <li>El stock se actualizará automáticamente</li>
+                </ol>
+                <div class="alert alert-info mt-3 mb-0">
+                    <i class="bi bi-info-circle me-2"></i>
+                    El sistema calcula el stock automáticamente: <strong>Stock = Total comprado - Total vendido</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validación: Precio de venta debe ser mayor que precio de compra
+    const precioCompra = document.getElementById('precio_compra');
+    const precioVenta = document.getElementById('precio_venta');
+    
+    function validarPrecios() {
+        const compra = parseFloat(precioCompra.value) || 0;
+        const venta = parseFloat(precioVenta.value) || 0;
+        
+        if (venta > 0 && compra > 0 && venta <= compra) {
+            precioVenta.classList.add('is-invalid');
+            precioVenta.nextElementSibling.innerHTML = 
+                '<span class="text-danger">El precio de venta debe ser mayor al precio de compra para obtener ganancias.</span>';
+        } else {
+            precioVenta.classList.remove('is-invalid');
+            precioVenta.nextElementSibling.innerHTML = 'Precio al que vendes el producto.';
+        }
+    }
+    
+    precioCompra.addEventListener('change', validarPrecios);
+    precioVenta.addEventListener('change', validarPrecios);
+    precioVenta.addEventListener('input', validarPrecios);
+    
+    // Validación inicial
+    validarPrecios();
+});
+</script>
+{% endblock %}

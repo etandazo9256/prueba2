@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva Venta{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h4><i class="bi bi-cart-plus"></i> Nueva Venta</h4>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">Cliente</label>
+                <select name="id_cliente" class="form-control" required>
+                    <option value="">Seleccionar cliente...</option>
+                    {% for cliente in clientes %}
+                    <option value="{{ cliente.id_cliente }}">{{ cliente.nombre }} ({{ cliente.cedula }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Producto</label>
+                <select name="producto_id" class="form-control" required>
+                    <option value="">Seleccionar producto...</option>
+                    {% for producto in productos %}
+                    <option value="{{ producto.id_producto }}" 
+                            data-precio="{{ producto.precio_venta }}"
+                            data-stock="{{ producto.stock }}">
+                        {{ producto.nombre }} - ${{ producto.precio_venta }} (Stock: {{ producto.stock }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Cantidad</label>
+                    <input type="number" name="cantidad" class="form-control" min="1" required>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Precio Unitario</label>
+                    <input type="number" step="0.01" name="precio" class="form-control" 
+                           id="precio_unitario" readonly>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Total</label>
+                <input type="text" class="form-control" id="total_calculado" readonly>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <a href="/ventas" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle"></i> Registrar Venta
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const productoSelect = document.querySelector('select[name="producto_id"]');
+    const cantidadInput = document.querySelector('input[name="cantidad"]');
+    const precioInput = document.getElementById('precio_unitario');
+    const totalInput = document.getElementById('total_calculado');
+    
+    function calcularTotal() {
+        const cantidad = parseInt(cantidadInput.value) || 0;
+        const precio = parseFloat(precioInput.value) || 0;
+        const total = cantidad * precio;
+        totalInput.value = '$' + total.toFixed(2);
+    }
+    
+    productoSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption.value) {
+            precioInput.value = selectedOption.getAttribute('data-precio');
+            calcularTotal();
+        } else {
+            precioInput.value = '';
+            totalInput.value = '';
+        }
+    });
+    
+    cantidadInput.addEventListener('input', calcularTotal);
+});
+</script>
+{% endblock %}

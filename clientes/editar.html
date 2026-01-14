@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Cliente{% endblock %}
+{% block subtitle %}Modificar información del cliente{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-pencil-square me-2"></i>
+                    Editar Cliente: {{ cliente.nombre }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('editar_cliente', id=cliente.id_cliente) }}">
+                    <div class="row">
+                        <!-- Nombre -->
+                        <div class="col-md-6 mb-3">
+                            <label for="nombre" class="form-label">
+                                <i class="bi bi-person me-1"></i> Nombre Completo *
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="nombre" 
+                                   name="nombre" 
+                                   value="{{ cliente.nombre }}" 
+                                   required>
+                        </div>
+                        
+                        <!-- Cédula -->
+                        <div class="col-md-6 mb-3">
+                            <label for="cedula" class="form-label">
+                                <i class="bi bi-card-text me-1"></i> Cédula/RUC *
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="cedula" 
+                                   name="cedula" 
+                                   value="{{ cliente.cedula }}" 
+                                   required>
+                        </div>
+                        
+                        <!-- Teléfono -->
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono" class="form-label">
+                                <i class="bi bi-telephone me-1"></i> Teléfono
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="telefono" 
+                                   name="telefono" 
+                                   value="{{ cliente.telefono or '' }}">
+                        </div>
+                        
+                        <!-- Correo -->
+                        <div class="col-md-6 mb-3">
+                            <label for="correo" class="form-label">
+                                <i class="bi bi-envelope me-1"></i> Correo Electrónico
+                            </label>
+                            <input type="email" 
+                                   class="form-control" 
+                                   id="correo" 
+                                   name="correo" 
+                                   value="{{ cliente.correo or '' }}">
+                        </div>
+                        
+                        <!-- Dirección -->
+                        <div class="col-md-12 mb-3">
+                            <label for="direccion" class="form-label">
+                                <i class="bi bi-geo-alt me-1"></i> Dirección
+                            </label>
+                            <textarea class="form-control" 
+                                      id="direccion" 
+                                      name="direccion" 
+                                      rows="2">{{ cliente.direccion or '' }}</textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Botones -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{{ url_for('listar_clientes') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

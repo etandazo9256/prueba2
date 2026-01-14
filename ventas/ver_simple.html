@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Venta #{{ venta.id_venta }}{% endblock %}
+{% block subtitle %}Detalles de la venta{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Detalles de la Venta</h5>
+                <div class="btn-group">
+                    <a href="{{ url_for('editar_venta', id=venta.id_venta) }}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-pencil me-1"></i> Editar
+                    </a>
+                    <a href="{{ url_for('listar_ventas') }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i> Volver
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Información de la Venta</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <td><strong>Número:</strong></td>
+                                <td>V-{{ "%06d"|format(venta.id_venta) }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fecha:</strong></td>
+                                <td>{{ venta.fecha_venta.strftime('%d/%m/%Y %H:%M') }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cliente:</strong></td>
+                                <td>
+                                    {% if venta.cliente %}
+                                        {{ venta.cliente.nombre }}
+                                        <br>
+                                        <small class="text-muted">CI: {{ venta.cliente.cedula }}</small>
+                                    {% else %}
+                                        <span class="text-muted">No especificado</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Resumen Financiero</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <td><strong>Subtotal:</strong></td>
+                                <td>${{ "%.2f"|format(venta.total) }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>IVA (12%):</strong></td>
+                                <td>${{ "%.2f"|format(venta.total * 0.12) }}</td>
+                            </tr>
+                            <tr class="table-success">
+                                <td><strong>TOTAL:</strong></td>
+                                <td><strong>${{ "%.2f"|format(venta.total) }}</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h6 class="text-muted">Productos Vendidos</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for detalle in venta.detalles %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ detalle.producto.nombre }}</strong>
+                                        <br>
+                                        <small class="text-muted">Código: PROD-{{ "%06d"|format(detalle.producto.id_producto) }}</small>
+                                    </td>
+                                    <td>{{ detalle.cantidad }}</td>
+                                    <td>${{ detalle.precio_unitario }}</td>
+                                    <td>${{ detalle.cantidad * detalle.precio_unitario }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-light">
+                                    <td colspan="3" class="text-end"><strong>Total Venta:</strong></td>
+                                    <td><strong>${{ "%.2f"|format(venta.total) }}</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">Acciones</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-success mb-2" onclick="imprimirRecibo()">
+                        <i class="bi bi-printer me-2"></i> Imprimir Recibo
+                    </button>
+                    <a href="{{ url_for('crear_venta') }}" class="btn btn-primary mb-2">
+                        <i class="bi bi-cart-plus me-2"></i> Nueva Venta
+                    </a>
+                    <form method="POST" 
+                          action="{{ url_for('eliminar_venta', id=venta.id_venta) }}" 
+                          onsubmit="return confirm('¿Estás seguro de eliminar esta venta?');">
+                        <button type="submit" class="btn btn-outline-danger w-100">
+                            <i class="bi bi-trash me-2"></i> Eliminar Venta
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">Información del Cliente</h5>
+            </div>
+            <div class="card-body">
+                {% if venta.cliente %}
+                <p><strong>Nombre:</strong><br>{{ venta.cliente.nombre }}</p>
+                <p><strong>Cédula/RUC:</strong><br>{{ venta.cliente.cedula }}</p>
+                {% if venta.cliente.telefono %}
+                <p><strong>Teléfono:</strong><br>{{ venta.cliente.telefono }}</p>
+                {% endif %}
+                {% if venta.cliente.correo %}
+                <p><strong>Correo:</strong><br>{{ venta.cliente.correo }}</p>
+                {% endif %}
+                {% else %}
+                <p class="text-muted text-center">Cliente no especificado</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">Recibo de Venta</h5>
+            </div>
+            <div class="card-body" id="recibo">
+                <div class="text-center mb-4">
+                    <h4>SISTEMA DE INVENTARIO</h4>
+                    <p>Recibo de Venta</p>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>N°:</strong> V-{{ "%06d"|format(venta.id_venta) }}</p>
+                        <p><strong>Fecha:</strong> {{ venta.fecha_venta.strftime('%d/%m/%Y %H:%M') }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        {% if venta.cliente %}
+                        <p><strong>Cliente:</strong> {{ venta.cliente.nombre }}</p>
+                        <p><strong>CI/RUC:</strong> {{ venta.cliente.cedula }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Cant.</th>
+                            <th>Descripción</th>
+                            <th>P. Unitario</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for detalle in venta.detalles %}
+                        <tr>
+                            <td>{{ detalle.cantidad }}</td>
+                            <td>{{ detalle.producto.nombre }}</td>
+                            <td>${{ detalle.precio_unitario }}</td>
+                            <td>${{ detalle.cantidad * detalle.precio_unitario }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>TOTAL:</strong></td>
+                            <td><strong>${{ "%.2f"|format(venta.total) }}</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                
+                <hr>
+                
+                <div class="text-center mt-4">
+                    <p>¡Gracias por su compra!</p>
+                    <p class="text-muted">Sistema de Inventario - {{ venta.fecha_venta.strftime('%d/%m/%Y') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function imprimirRecibo() {
+    const contenidoOriginal = document.body.innerHTML;
+    const contenidoRecibo = document.getElementById('recibo').innerHTML;
+    
+    document.body.innerHTML = contenidoRecibo;
+    window.print();
+    document.body.innerHTML = contenidoOriginal;
+    window.location.reload();
+}
+</script>
+{% endblock %}

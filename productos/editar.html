@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Producto{% endblock %}
+{% block subtitle %}Modificar información del producto{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-pencil-square me-2"></i>
+                    Editar Producto: {{ producto.nombre }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('editar_producto', id=producto.id_producto) }}">
+                    <div class="row">
+                        <!-- Nombre del Producto -->
+                        <div class="col-md-12 mb-3">
+                            <label for="nombre" class="form-label">
+                                <i class="bi bi-tag me-1"></i> Nombre del Producto *
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="nombre" 
+                                   name="nombre" 
+                                   value="{{ producto.nombre }}" 
+                                   required
+                                   placeholder="Ej: Laptop Dell Inspiron 15">
+                            <div class="form-text">Nombre completo del producto.</div>
+                        </div>
+                        
+                        <!-- Descripción -->
+                        <div class="col-md-12 mb-3">
+                            <label for="descripcion" class="form-label">
+                                <i class="bi bi-card-text me-1"></i> Descripción
+                            </label>
+                            <textarea class="form-control" 
+                                      id="descripcion" 
+                                      name="descripcion" 
+                                      rows="3"
+                                      placeholder="Descripción detallada del producto">{{ producto.descripcion or '' }}</textarea>
+                            <div class="form-text">Opcional. Describe características del producto.</div>
+                        </div>
+                        
+                        <!-- Precios -->
+                        <div class="col-md-6 mb-3">
+                            <label for="precio_compra" class="form-label">
+                                <i class="bi bi-arrow-down-circle me-1"></i> Precio de Compra *
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="precio_compra" 
+                                       name="precio_compra" 
+                                       value="{{ producto.precio_compra }}" 
+                                       required
+                                       step="0.01"
+                                       min="0"
+                                       placeholder="0.00">
+                            </div>
+                            <div class="form-text">Precio al que compras el producto.</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="precio_venta" class="form-label">
+                                <i class="bi bi-arrow-up-circle me-1"></i> Precio de Venta *
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="precio_venta" 
+                                       name="precio_venta" 
+                                       value="{{ producto.precio_venta }}" 
+                                       required
+                                       step="0.01"
+                                       min="0"
+                                       placeholder="0.00">
+                            </div>
+                            <div class="form-text">Precio al que vendes el producto.</div>
+                        </div>
+                        
+                        <!-- Proveedor -->
+                        <div class="col-md-12 mb-3">
+                            <label for="id_proveedor" class="form-label">
+                                <i class="bi bi-truck me-1"></i> Proveedor
+                            </label>
+                            <select class="form-select" id="id_proveedor" name="id_proveedor">
+                                <option value="">Seleccionar proveedor...</option>
+                                {% for proveedor in proveedores %}
+                                <option value="{{ proveedor.id_proveedor }}" 
+                                        {% if producto.id_proveedor == proveedor.id_proveedor %}selected{% endif %}>
+                                    {{ proveedor.nombre }} ({{ proveedor.ruc }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text">Opcional. Asigna un proveedor a este producto.</div>
+                        </div>
+                        
+                        <!-- Información de Stock -->
+                        <div class="col-md-12 mb-4">
+                            <div class="card border-info">
+                                <div class="card-header bg-info bg-opacity-10">
+                                    <h6 class="mb-0">
+                                        <i class="bi bi-box-seam me-1"></i>
+                                        Información de Stock Actual
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Stock Actual:</strong></p>
+                                            <h3 class="text-center {% if producto.stock > 10 %}text-success{% elif producto.stock > 0 %}text-warning{% else %}text-danger{% endif %}">
+                                                {{ producto.stock }} unidades
+                                            </h3>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Valor en Inventario:</strong></p>
+                                            <h3 class="text-center text-primary">
+                                                ${{ "%.2f"|format(producto.precio_compra * producto.stock) }}
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <small class="text-muted">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            El stock se calcula automáticamente: Compras - Ventas
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Botones -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{{ url_for('listar_productos') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Cancelar
+                        </a>
+                        <div>
+                            <a href="{{ url_for('ver_producto', id=producto.id_producto) }}" class="btn btn-info me-2">
+                                <i class="bi bi-eye me-1"></i> Ver Detalles
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-1"></i> Guardar Cambios
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Panel de ayuda -->
+        <div class="card mt-4">
+            <div class="card-header bg-white">
+                <h6 class="card-title mb-0">
+                    <i class="bi bi-lightbulb me-2"></i>
+                    Consejos para gestionar productos
+                </h6>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>Mantén actualizados los precios para reflejar cambios en el mercado.</li>
+                    <li>Asigna proveedores para facilitar las compras futuras.</li>
+                    <li>Revisa regularmente el stock para evitar faltantes.</li>
+                    <li>Considera ajustar precios según la demanda y temporada.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validación: Precio de venta debe ser mayor que precio de compra
+    const precioCompra = document.getElementById('precio_compra');
+    const precioVenta = document.getElementById('precio_venta');
+    
+    function validarPrecios() {
+        const compra = parseFloat(precioCompra.value) || 0;
+        const venta = parseFloat(precioVenta.value) || 0;
+        
+        if (venta > 0 && compra > 0 && venta <= compra) {
+            precioVenta.classList.add('is-invalid');
+            precioVenta.nextElementSibling.innerHTML = 
+                '<span class="text-danger">El precio de venta debe ser mayor al precio de compra para obtener ganancias.</span>';
+        } else {
+            precioVenta.classList.remove('is-invalid');
+            precioVenta.nextElementSibling.innerHTML = 'Precio al que vendes el producto.';
+        }
+    }
+    
+    precioCompra.addEventListener('change', validarPrecios);
+    precioVenta.addEventListener('change', validarPrecios);
+    precioVenta.addEventListener('input', validarPrecios);
+    
+    // Validación inicial
+    validarPrecios();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Venta{% endblock %}
+{% block subtitle %}Modificar información de la venta{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-pencil-square me-2"></i>
+                    Editar Venta #{{ venta.id_venta }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('editar_venta', id=venta.id_venta) }}">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Fecha de Venta</label>
+                            <p class="form-control-plaintext">{{ venta.fecha_venta.strftime('%d/%m/%Y %H:%M') }}</p>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Cliente *</label>
+                            <select name="cliente_id" class="form-select" required>
+                                <option value="">Seleccionar cliente...</option>
+                                {% for cliente in clientes %}
+                                <option value="{{ cliente.id_cliente }}" 
+                                        {% if venta.cliente and cliente.id_cliente == venta.id_cliente %}selected{% endif %}>
+                                    {{ cliente.nombre }} ({{ cliente.cedula }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">Cliente actual: 
+                                {% if venta.cliente %}
+                                    {{ venta.cliente.nombre }}
+                                {% else %}
+                                    <span class="text-danger">Sin cliente asignado</span>
+                                {% endif %}
+                            </small>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Producto *</label>
+                            <select name="producto_id" class="form-select" id="productoSelect" required>
+                                <option value="">Seleccionar producto...</option>
+                                {% for producto in productos %}
+                                <option value="{{ producto.id_producto }}" 
+                                        data-precio="{{ producto.precio_venta }}"
+                                        data-stock="{{ producto.stock }}"
+                                        {% if producto_actual and producto.id_producto == producto_actual.id_producto %}selected{% endif %}>
+                                    {{ producto.nombre }} - ${{ producto.precio_venta }} (Stock: {{ producto.stock }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">
+                                {% if producto_actual %}
+                                    Producto actual: {{ producto_actual.nombre }}
+                                {% endif %}
+                            </small>
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Cantidad *</label>
+                            <input type="number" name="cantidad" class="form-control" 
+                                   id="cantidadInput" min="1" value="{{ cantidad_actual or 1 }}" required>
+                            <small class="text-muted">
+                                {% if cantidad_actual %}
+                                    Cantidad actual: {{ cantidad_actual }}
+                                {% endif %}
+                            </small>
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Precio Unitario</label>
+                            <input type="text" class="form-control" id="precioUnitario" readonly>
+                        </div>
+                        
+                        <div class="col-12 mb-4">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6>Resumen de la Venta</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>Venta Actual:</strong><br>
+                                                {% if producto_actual %}
+                                                    {{ cantidad_actual }} x {{ producto_actual.nombre }}<br>
+                                                    Total: ${{ venta.total }}
+                                                {% else %}
+                                                    Sin productos
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6 text-end">
+                                            <h5>Nuevo Total: <span id="nuevoTotal" class="text-success">$0.00</span></h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Información de la venta actual -->
+                    <div class="mb-4">
+                        <h6>Detalles Actuales de la Venta</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio Unitario</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for detalle in venta.detalles %}
+                                    <tr>
+                                        <td>{{ detalle.producto.nombre }}</td>
+                                        <td>{{ detalle.cantidad }}</td>
+                                        <td>${{ detalle.precio_unitario }}</td>
+                                        <td>${{ detalle.cantidad * detalle.precio_unitario }}</td>
+                                    </tr>
+                                    {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">No hay detalles de venta</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-light">
+                                        <td colspan="3" class="text-end"><strong>Total Actual:</strong></td>
+                                        <td><strong>${{ venta.total }}</strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Botones -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <div>
+                            <a href="{{ url_for('listar_ventas') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-1"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-1"></i> Guardar Cambios
+                            </button>
+                        </div>
+                        <div>
+                            <form method="POST" action="{{ url_for('eliminar_venta', id=venta.id_venta) }}" 
+                                  style="display: inline;" 
+                                  onsubmit="return confirm('¿Estás seguro de eliminar esta venta?');">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash me-1"></i> Eliminar Venta
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const productoSelect = document.getElementById('productoSelect');
+    const cantidadInput = document.getElementById('cantidadInput');
+    const precioUnitario = document.getElementById('precioUnitario');
+    const nuevoTotal = document.getElementById('nuevoTotal');
+    
+    function calcularTotal() {
+        const cantidad = parseInt(cantidadInput.value) || 0;
+        const precio = parseFloat(precioUnitario.value) || 0;
+        const total = cantidad * precio;
+        nuevoTotal.textContent = '$' + total.toFixed(2);
+    }
+    
+    function actualizarPrecio() {
+        const selectedOption = productoSelect.options[productoSelect.selectedIndex];
+        if (selectedOption.value) {
+            precioUnitario.value = selectedOption.getAttribute('data-precio');
+            calcularTotal();
+            
+            // Mostrar advertencia de stock bajo
+            const stock = parseInt(selectedOption.getAttribute('data-stock'));
+            const cantidad = parseInt(cantidadInput.value) || 0;
+            
+            if (stock <= 0) {
+                alert('⚠️ Este producto está AGOTADO');
+            } else if (cantidad > stock) {
+                alert(`⚠️ Stock insuficiente. Disponible: ${stock} unidades`);
+            } else if (stock <= 5) {
+                alert('⚠️ Stock bajo. Disponible: ' + stock + ' unidades');
+            }
+        } else {
+            precioUnitario.value = '';
+            nuevoTotal.textContent = '$0.00';
+        }
+    }
+    
+    // Event listeners
+    productoSelect.addEventListener('change', actualizarPrecio);
+    cantidadInput.addEventListener('input', calcularTotal);
+    
+    // Inicializar con valores actuales
+    if (productoSelect.value) {
+        actualizarPrecio();
+    }
+});
+</script>
+{% endblock %}

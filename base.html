@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Inventario</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .sidebar {
+            background: linear-gradient(180deg, #2c3e50 0%, #1a252f 100%);
+            color: white;
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            padding-top: 20px;
+            box-shadow: 3px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        
+        .sidebar .nav-link {
+            color: #b3c0d1;
+            padding: 12px 20px;
+            margin: 2px 0;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar .nav-link:hover {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(52, 152, 219, 0.3);
+            border-left: 4px solid #3498db;
+        }
+        
+        .sidebar .logo {
+            text-align: center;
+            padding: 20px 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card {
+            border-left: 5px solid #3498db;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2980b9 0%, #1c5d87 100%);
+        }
+        
+        .table {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .table thead {
+            background-color: #f8f9fa;
+        }
+        
+        .table th {
+            border-top: none;
+            font-weight: 600;
+        }
+        
+        .alert {
+            border-radius: 8px;
+            border: none;
+        }
+        
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+                min-height: auto;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar d-none d-md-block">
+        <div class="logo">
+            <h3><i class="bi bi-box-seam me-2"></i>Inventario</h3>
+            <small class="text-muted">Sistema de Gestión</small>
+        </div>
+        
+        <nav class="nav flex-column">
+            <a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}">
+                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+            </a>
+            
+            <a class="nav-link {% if 'clientes' in request.endpoint %}active{% endif %}" href="{{ url_for('listar_clientes') }}">
+                <i class="bi bi-people me-2"></i> Clientes
+            </a>
+            
+            <a class="nav-link {% if 'productos' in request.endpoint %}active{% endif %}" href="{{ url_for('listar_productos') }}">
+                <i class="bi bi-box me-2"></i> Productos
+            </a>
+            
+            <a class="nav-link {% if 'ventas' in request.endpoint %}active{% endif %}" href="{{ url_for('listar_ventas') }}">
+                <i class="bi bi-cart-check me-2"></i> Ventas
+            </a>
+            
+            <a class="nav-link {% if 'compras' in request.endpoint %}active{% endif %}" href="{{ url_for('listar_compras') }}">
+                <i class="bi bi-cart-plus me-2"></i> Compras
+            </a>
+            
+            <a class="nav-link {% if 'proveedores' in request.endpoint %}active{% endif %}" href="{{ url_for('listar_proveedores') }}">
+                <i class="bi bi-truck me-2"></i> Proveedores
+            </a>
+
+            <a class="nav-link {% if 'usuarios' in request.endpoint %}active{% endif %}" href="{{ url_for('listar_usuarios') }}">
+                <i class="bi bi-people me-2"></i> Usuarios
+            </a>
+
+            <a class="nav-link {% if 'inventario' in request.endpoint %}active{% endif %}" href="{{ url_for('inventario') }}">
+                <i class="bi bi-clipboard-data me-2"></i> Inventario
+            </a>
+            
+            <a class="nav-link {% if 'reportes' in request.endpoint %}active{% endif %}" href="{{ url_for('reportes_dashboard') }}">
+                <i class="bi bi-graph-up me-2"></i> Reportes
+            </a>
+
+            <hr class="text-muted mx-3 my-4">
+            
+            <a class="nav-link" href="{{ url_for('logout') }}">
+                <i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión
+            </a>
+        </nav>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navigation for mobile -->
+        <nav class="navbar navbar-expand-md d-md-none">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <i class="bi bi-box-seam me-2"></i>Inventario
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="mobileNav">
+                    <div class="navbar-nav">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
+                        <a class="nav-link" href="{{ url_for('listar_clientes') }}">Clientes</a>
+                        <a class="nav-link" href="{{ url_for('listar_productos') }}">Productos</a>
+                        <a class="nav-link" href="{{ url_for('listar_ventas') }}">Ventas</a>
+                        <a class="nav-link" href="{{ url_for('listar_compras') }}">Compras</a>
+                        <a class="nav-link" href="{{ url_for('listar_proveedores') }}">Proveedores</a>
+                        <a class="nav-link" href="{{ url_for('logout') }}">Salir</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- User Info -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h4 class="mb-0">{% block title %}{% endblock %}</h4>
+                <small class="text-muted">{% block subtitle %}{% endblock %}</small>
+            </div>
+            <div class="d-flex align-items-center">
+                <span class="me-3"><i class="bi bi-person-circle me-1"></i> {{ current_user.usuario }}</span>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-gear"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Perfil</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Page Content -->
+        <div class="container-fluid p-0">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Activar el menú activo
+        document.addEventListener('DOMContentLoaded', function() {
+            // Eliminar clase active de todos los enlaces
+            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Agregar clase active al enlace actual
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>
